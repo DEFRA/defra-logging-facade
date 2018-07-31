@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/DEFRA/defra-logging-facade.svg?branch=master)](https://travis-ci.org/DEFRA/defra-logging-facade)
-
+[![Maintainability](https://api.codeclimate.com/v1/badges/5c85565bb7e8316b381c/maintainability)](https://codeclimate.com/github/DEFRA/defra-logging-facade/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/5c85565bb7e8316b381c/test_coverage)](https://codeclimate.com/github/DEFRA/defra-logging-facade/test_coverage)
 
 The DEFRA logging facade has been designed to standardise the logging functionality for digital services.
 It uses twelve-factor app principles and may be configured completely via environment variables. 
