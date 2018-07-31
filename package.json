@@ -1,0 +1,32 @@
+{
+  "name": "defra-logging-facade",
+  "version": "1.0.0",
+  "description": "Standard facade for logging in DEFRA nodejs applications",
+  "keywords": [
+    "winston",
+    "airbrake",
+    "logging"
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "lab"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": "https://github.com/DEFRA/defra-logging-facade.git",
+  "engines": {
+    "node": ">=8.11.1"
+  },
+  "dependencies": {
+    "airbrake-js": "^1.4.3",
+    "request": "^2.87.0",
+    "winston": "^3.0.0",
+    "winston-transport": "^4.2.0"
+  },
+  "devDependencies": {
+    "code": "^5.2.0",
+    "hapi": "^17.5.2",
+    "lab": "^15.4.5",
+    "standard": "^11.0.1"
+  }
+}
