@@ -43,12 +43,17 @@ module.exports = class TestAppServer {
   }
 
   async start () {
-    await this._fakeAppServer.register({
-      plugin: Logger,
-      options: {
-        logger: new Logger()
+    // Verbose, but designed to test both methods of initialisation
+    let cfg = Logger
+    if (this._options.logger) {
+      cfg = {
+        plugin: Logger,
+        options: {
+          logger: this._options.logger
+        }
       }
-    })
+    }
+    await this._fakeAppServer.register(cfg)
     await this._fakeAppServer.start()
   }
 

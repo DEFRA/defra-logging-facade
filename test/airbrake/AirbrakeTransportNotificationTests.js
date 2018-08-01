@@ -64,6 +64,22 @@ lab.experiment('Test airbrake transport', () => {
     expect(payload.errors[0].message).to.equal('First string Second string')
   })
 
+  lab.test('notifies as expected when given an Array of strings with an Error object', async () => {
+    let notificationRequest = null
+    fakeAirbrakeServer.useDefaultResponse()
+    fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
+
+    const transport = new AirbrakeTransport(airbrakeOpts)
+    await transport.log({
+      message: ['A string containing %s and a', 'an embedded string', new Error('Test error object')]
+    })
+
+    defaultResponseAssertions(notificationRequest)
+    const payload = notificationRequest.payload
+    expect(payload.errors[0].message).to.equal('A string containing an embedded string and a Test error object')
+    expect(payload.errors[0].backtrace[0].file).to.include(scriptName)
+  })
+
   lab.test('notifies as expected when given an Error object', async () => {
     let notificationRequest = null
     fakeAirbrakeServer.useDefaultResponse()
@@ -80,24 +96,47 @@ lab.experiment('Test airbrake transport', () => {
     expect(payload.errors[0].backtrace[0].file).to.include(scriptName)
   })
 
-  lab.test('notifies as expected when given an Array of strings with an Error object', async () => {
+  lab.test('correctly translates winston log level to airbrake log level', async () => {
+    const mapping = {
+      'error': 'error',
+      'warn': 'warning',
+      'info': 'info',
+      'verbose': 'debug',
+      'debug': 'debug',
+      'silly': 'debug'
+    }
+
+    for (let level in mapping) {
+      let severity = mapping[level]
+      let msg = 'A message of level ' + level + ' should map to airbrake severity ' + severity
+      let notificationRequest = null
+      fakeAirbrakeServer.useDefaultResponse()
+      fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
+
+      const transport = new AirbrakeTransport(airbrakeOpts)
+      await transport.log({
+        message: msg,
+        level: level
+      })
+
+      defaultResponseAssertions(notificationRequest)
+      const payload = notificationRequest.payload
+      expect(payload.errors[0].message).to.equal(msg)
+      expect(payload.context.severity).to.equal(severity)
+    }
+  })
+
+  lab.test('degrades given an empty message array', async () => {
     let notificationRequest = null
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
 
     const transport = new AirbrakeTransport(airbrakeOpts)
-    await transport.log({
-      message: [
-        'A string containing %s and a',
-        'an embedded string',
-        new Error('Test error object')
-      ]
-    })
+    await transport.log({message: []})
 
     defaultResponseAssertions(notificationRequest)
     const payload = notificationRequest.payload
-    expect(payload.errors[0].message).to.equal('A string containing an embedded string and a Test error object')
-    expect(payload.errors[0].backtrace[0].file).to.include(scriptName)
+    expect(payload.errors[0].message).to.equal('Unspecified error')
   })
 
   lab.test('degrades when not given a message property', async () => {

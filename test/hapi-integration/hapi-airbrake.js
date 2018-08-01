@@ -6,6 +6,7 @@ const wait = require('../lib/wait')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
 const TestAppServer = require('../lib/TestAppServer')
+const Logger = require('../../lib/index')
 let appServer = null
 
 lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
@@ -15,7 +16,10 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
   lab.before(async () => {
     process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}/`
     process.env.AIRBRAKE_PROJECT_KEY = '1234567890'
-    appServer = new TestAppServer()
+    process.env.NODE_ENV = 'Unit test fake app server'
+    appServer = new TestAppServer({
+      logger: new Logger()
+    })
     await fakeAirbrakeServer.start()
     await appServer.start()
   })
