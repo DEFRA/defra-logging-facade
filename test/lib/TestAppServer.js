@@ -1,19 +1,18 @@
 const Hapi = require('hapi')
-const Logger = require('../../lib/index')
 
 let nextPort = 32323
 module.exports = class TestAppServer {
   constructor (opts = {}) {
     const self = this
-    const port = opts.port || nextPort++
     this._options = opts
+    const port = this._options.port || nextPort++
     this._fakeAppServer = Hapi.server({
       port: port,
       host: 'localhost'
     })
 
     this._fakeAppServer.events.on('start', function () {
-      console.log('Test app server is running on PORT : ' + self.getPort())
+      process.stdout.write(`Test app server is running on port ${self.getPort()}\n`)
     })
 
     process.on('SIGINT', function () {
@@ -34,6 +33,30 @@ module.exports = class TestAppServer {
         throw new Error('Broken')
       }
     })
+    this._fakeAppServer.route({
+      method: ['GET', 'POST', 'PATCH', 'PUT'],
+      path: '/fireRequestLog',
+      handler: (request, h) => {
+        request.log('something', new Error('Testing error handling!'))
+        return h.response({response: 200}).code(200)
+      }
+    })
+    this._fakeAppServer.route({
+      method: ['GET', 'POST', 'PATCH', 'PUT'],
+      path: '/fireServerLog',
+      handler: (request, h) => {
+        this._fakeAppServer.log('something', 'Something happened')
+        return h.response({response: 200}).code(200)
+      }
+    })
+    this._fakeAppServer.route({
+      method: ['GET', 'POST', 'PATCH', 'PUT'],
+      path: '/fireServerErrorLog',
+      handler: (request, h) => {
+        this._fakeAppServer.log('something', new Error('Testing error handling!'))
+        return h.response({response: 200}).code(200)
+      }
+    })
 
     this.methods = this._fakeAppServer.methods
   }
@@ -43,17 +66,9 @@ module.exports = class TestAppServer {
   }
 
   async start () {
-    // Verbose, but designed to test both methods of initialisation
-    let cfg = Logger
-    if (this._options.logger) {
-      cfg = {
-        plugin: Logger,
-        options: {
-          logger: this._options.logger
-        }
-      }
+    for (let pluginCfg of this._options.plugins || []) {
+      await this._fakeAppServer.register(pluginCfg)
     }
-    await this._fakeAppServer.register(cfg)
     await this._fakeAppServer.start()
   }
 

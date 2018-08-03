@@ -19,12 +19,14 @@
   },
   "dependencies": {
     "airbrake-js": "^1.4.3",
+    "lodash": "^4.17.10",
     "request": "^2.87.0",
     "winston": "^3.0.0",
     "winston-transport": "^4.2.0"
   },
   "devDependencies": {
     "code": "^5.2.0",
+    "good": "^8.1.1",
     "hapi": "^17.5.2",
     "lab": "^15.4.5",
     "standard": "^11.0.1"

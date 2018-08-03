@@ -6,6 +6,21 @@ module.exports = class LogMonitor {
     })
   }
 
+  reset () {
+    this._logs = []
+  }
+
+  async all () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (this._logs.length > 0) {
+          resolve(this._logs)
+        }
+        reject(new Error('No logs found'))
+      }, 100)
+    })
+  }
+
   async lastLog () {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -13,7 +28,7 @@ module.exports = class LogMonitor {
           resolve(this._logs[this._logs.length - 1])
         }
         reject(new Error('No logs found'))
-      }, 100)
+      }, 300)
     })
   }
 }
