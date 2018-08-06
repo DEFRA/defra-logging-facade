@@ -14,7 +14,11 @@ npm install --save defra-logging-facade
 
 # Usage
 
-## Retrieving the default logger
+## Recommended Usage
+
+It is strongly recommended that projects use the default logger unless there is a need to configure a logger in a 
+specific manner (e.g. a special logger object to server as a audit trail).  Thhe default logger is configured solely 
+using environment variables.  For further details of the environment variables available, see below.
 
 ```
 const {logger} = require('defra-logging-facade')
@@ -118,10 +122,11 @@ are optional.  If no arguments are supplied, the logging levels for each event m
           "module": "defra-logging-facade",
           "args": [{
             "goodEventLevels": {
+              "log": "info",
               "error": "error",
               "ops": "debug",
-              "request": "error",
-              "response": "error"
+              "request": "info",
+              "response": "info"
             }
           }]
         }
@@ -129,6 +134,55 @@ are optional.  If no arguments are supplied, the logging levels for each event m
     }
 }
 ```
+
+**Note**
+
+It is common for hapi projects to want to display custom content to the user in the event of a server error (some 
+uncaught exception thrown by a route handler, for example).  This is often achieved through a custom onPreResponse handler.  
+
+Using a custom onPreResponse handler to forward to a custom view will suppress the error event so you must log the error manually.
+
+The `logger.serverError(error, request)` method is provided for this purpose.  The request object may be passed along with
+the Error in order to provide additional debugging data to airbrake/errbit.
+
+
+```javascript
+const {logger} = require('defra-logging-facade')
+server.ext('onPreResponse', (request, h) => {
+  if (request.response.isBoom) {
+    // An error occurred processing the request
+    const statusCode = request.response.output.statusCode
+    
+    if (statusCode / 100 === 4) {
+      // Custom handling for 4xx codes
+    } else if (statusCode / 100 === 5) {
+      // 5xx Server failure, log an error to airbrake/errbit - the response object is actually an instanceof Error
+      logger.serverError(request.response, request)
+      return h.view('500').code(statusCode)
+    }
+  }
+  return h.continue
+})
+
+``` 
+
+
+# Environment Variable Reference
+
+General:
+
+| Variable           | Description   
+| -------------      |-------------
+| DEFAULT_LOG_LEVEL  | The lowest severity of message which will be processed by any transport, **default: `info`** 
+
+
+For airbrake/errbit integration:
+
+| Variable              | Description   
+| -------------         |-------------
+| AIRBRAKE_HOST         | The airbrake server to notify (e.g https://airbrakeserver.example.com) **required** 
+| AIRBRAKE_PROJECT_KEY  | The project key configured on the server to identify your service **required**
+| AIRBRAKE_LOG_LEVEL    | The lowest severity of message which will be sent to airbrake, **default: `error`** 
 
 
 # Contributing to this project
