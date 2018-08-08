@@ -16,6 +16,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
   lab.before(async () => {
     process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}/`
     process.env.AIRBRAKE_PROJECT_KEY = '1234567890'
+    process.env.AIRBRAKE_LOG_LEVEL = 'error'
     process.env.NODE_ENV = 'Unit test fake app server'
     appServer = new TestAppServer({
       plugins: [
@@ -45,6 +46,15 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     expect(payload.context.action).to.equal('GET /broken?withTestParameter=true')
     expect(payload.context.severity).to.equal('error')
     expect(payload.context.userAgent).to.equal('shot')
+  })
+
+  lab.test('No notification on client error', async () => {
+    let payload = null
+    fakeAirbrakeServer.useDefaultResponse()
+    fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
+    await appServer.inject({url: `http://localhost:${appServer.getPort()}/something/that/doesnt/exist`})
+    await wait.for(1000)
+    expect(payload).to.be.null()
   })
 
   lab.test('No notification on success', async () => {
