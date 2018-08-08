@@ -27,9 +27,10 @@ logger.debug('Debug message')
 logger.info('Info message')
 logger.log('Another info message'
 logger.warn('Warning message')
-logger.error('Error message')
-
+logger.error('An error occurred', err)
 ```
+> **Note**: Only use the .error() severity when the error is unexpected/unrecoverable and represents a real operational
+> problem with the service.  Client request errors, for example, should never be logged with the .error() method. 
 
 ## Overriding console log methods
 The DEFRA logging facade provides a simple migration path for existing projects using the console log methods
@@ -38,33 +39,25 @@ existing console logging methods.
 
 There are two ways to switch the existing console logging calls over to use the logging facade:
 
-### Method 1 - By shadowing the console object, requires you to add the following require statement at the top of each .js file
-
-```javascript
-const {console} = require('defra-logging-facade')
-
-console.debug('Debug message')
-console.info('Info message')
-console.log('Another info message')
-console.warn('Warning message')
-console.error('Error message')
-```
-
-### Method 2 - The facade can also intercept the console log methods on a process-wide basis.
-
+The facade can also intercept the console log methods on a process-wide basis:
 ```javascript
 const {logger} = require('defra-logging-facade')
 logger.interceptConsole()
-
-console.debug('Debug message')
-console.info('Info message')
-console.log('Another info message')
-console.warn('Warning message')
-console.error('Error message')
 ```
+
+If you want to avoid intercepting the console on a process-wide basis but are too lazy to refactor existing console.log()
+calls, you can shadow the console object, by adding the following require statement at the top of each .js file
+```javascript
+const {console} = require('defra-logging-facade')
+```
+
+
 
 ## Integrating with hapi
 
+### Simple hapi integration
+The defra-logging-facade provides a simple hapi plugin for dealing with log events from hapi.  This plugin does not require
+the hapi good logging framework or any additional plugins.
 
 To integrate hapi with the default logger:
 ```javascript
