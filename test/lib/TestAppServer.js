@@ -58,6 +58,18 @@ module.exports = class TestAppServer {
       }
     })
 
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+    this._fakeAppServer.route({
+      method: ['GET', 'POST', 'PATCH', 'PUT'],
+      path: '/timeout/{duration}',
+      handler: async (request, h) => {
+        const duration = parseInt(request.params.duration) || 5000
+        await delay(duration)
+        return h.response({response: 200}).code(200)
+      }
+    })
+
     this.methods = this._fakeAppServer.methods
   }
 

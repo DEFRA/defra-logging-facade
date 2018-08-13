@@ -6,6 +6,7 @@ const wait = require('../lib/wait')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
 const TestAppServer = require('../lib/TestAppServer')
+const request = require('request')
 const {Logger, HapiErrorLoggerPlugin} = require('../../lib/index')
 let appServer = null
 
@@ -55,6 +56,25 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     await appServer.inject({url: `http://localhost:${appServer.getPort()}/something/that/doesnt/exist`})
     await wait.for(1000)
     expect(payload).to.be.null()
+  })
+
+  lab.test('No notification on client abort', async () => {
+    return new Promise(function (resolve, reject) {
+      let payload = null
+      fakeAirbrakeServer.useDefaultResponse()
+      fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
+      request({
+        url: `http://localhost:${appServer.getPort()}/timeout/10000`,
+        timeout: 1000
+      }, async function (error, response, body) {
+        expect(response).to.be.undefined()
+        expect(body).to.be.undefined()
+        expect(error).to.be.an.error()
+        await wait.for(1000)
+        expect(payload).to.be.null()
+        resolve()
+      })
+    })
   })
 
   lab.test('No notification on success', async () => {
