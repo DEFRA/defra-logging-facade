@@ -37,7 +37,15 @@ module.exports = class TestAppServer {
       method: ['GET', 'POST', 'PATCH', 'PUT'],
       path: '/fireRequestLog',
       handler: (request, h) => {
-        request.log('something', new Error('Testing error handling!'))
+        request.log('info', 'A simple request log item')
+        return h.response({response: 200}).code(200)
+      }
+    })
+    this._fakeAppServer.route({
+      method: ['GET', 'POST', 'PATCH', 'PUT'],
+      path: '/fireRequestErrorLog',
+      handler: (request, h) => {
+        request.log('error', new Error('Testing error handling!'))
         return h.response({response: 200}).code(200)
       }
     })
@@ -53,7 +61,7 @@ module.exports = class TestAppServer {
       method: ['GET', 'POST', 'PATCH', 'PUT'],
       path: '/fireServerErrorLog',
       handler: (request, h) => {
-        this._fakeAppServer.log('something', new Error('Testing error handling!'))
+        this._fakeAppServer.log('error', new Error('Testing error handling!'))
         return h.response({response: 200}).code(200)
       }
     })

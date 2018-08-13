@@ -79,11 +79,11 @@ lab.experiment('Test hapi good console logging', {timeout: 30000}, () => {
 
   lab.test('intercepts the request.log() method', async () => {
     monitor.reset()
-    await appServer.inject({url: `http://localhost:${appServer.getPort()}/fireRequestLog`})
+    await appServer.inject({url: `http://localhost:${appServer.getPort()}/fireRequestErrorLog`})
     let logs = await monitor.all()
     expect(logs.length).to.equal(2)
     expect(logs[0].message).to.include('Error: Testing error handling!')
-    expect(logs[1].message).to.match(testResponseLog('/fireRequestLog', '{}', 200))
+    expect(logs[1].message).to.match(testResponseLog('/fireRequestErrorLog', '{}', 200))
   })
 
   lab.test('intercepts the server.log() method', async () => {

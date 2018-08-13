@@ -28,6 +28,14 @@ lab.experiment('Test hapi plugin', {timeout: 30000}, () => {
     monitor.reset()
     await appServer.inject({url: `http://localhost:${appServer.getPort()}/fireRequestLog`})
     let log = await monitor.lastLog()
+    expect(log.level).to.equal('info')
+    expect(log.message).to.include('A simple request log item')
+  })
+
+  lab.test('intercepts the request.log() method for Error objects', async () => {
+    monitor.reset()
+    await appServer.inject({url: `http://localhost:${appServer.getPort()}/fireRequestErrorLog`})
+    let log = await monitor.lastLog()
     expect(log.level).to.equal('error')
     expect(log.message).to.include('Error: Testing error handling!')
   })

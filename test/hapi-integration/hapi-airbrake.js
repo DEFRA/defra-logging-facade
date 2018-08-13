@@ -15,6 +15,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
    * Before running tests, create a mock airbrake server and a mock application server which has the plugin set up
    */
   lab.before(async () => {
+    console.log('Initialising test servers.')
     process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}/`
     process.env.AIRBRAKE_PROJECT_KEY = '1234567890'
     process.env.AIRBRAKE_LOG_LEVEL = 'error'
@@ -33,7 +34,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     await appServer.start()
   })
 
-  lab.test('Server notifies on failure', async () => {
+  lab.test('handles an exception thrown by a server route handler', async () => {
     let payload = null
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
@@ -137,7 +138,23 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     expect(payload.context.userAgent).to.equal('shot')
   })
 
+  lab.test('filters repeated errors', async () => {
+    let callCount = null
+    fakeAirbrakeServer.useDefaultResponse()
+    fakeAirbrakeServer.setNotificationHandler(() => {
+      callCount != null ? callCount++ : callCount = 1
+    })
+    for (let i = 0; i < 200; i++) {
+      await appServer.inject({url: `http://localhost:${appServer.getPort()}/broken`})
+    }
+    await wait.until(() => {
+      return callCount !== null
+    })
+    expect(callCount).to.equal(1)
+  })
+
   lab.after(async () => {
+    console.log('Shutting down test servers.')
     await appServer.stop()
     await fakeAirbrakeServer.stop()
   })
