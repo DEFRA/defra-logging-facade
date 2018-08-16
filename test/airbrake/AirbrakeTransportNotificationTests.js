@@ -7,6 +7,7 @@ const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
 const path = require('path')
 const scriptName = path.basename(__filename)
+const colors = require('colors')
 
 function defaultResponseAssertions (request) {
   expect(request.params.path).to.equal('/api/v3/projects/1/notices')
@@ -162,6 +163,45 @@ lab.experiment('Test airbrake transport', () => {
     defaultResponseAssertions(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Unspecified error')
+  })
+
+  lab.test('doesn\'t alter the Error object', async () => {
+    const expectedNotification = 'Example error text with ANSI colours'
+    const inputText = colors.red(expectedNotification)
+    const errorObj = new Error(inputText)
+    let notificationRequest = null
+    fakeAirbrakeServer.useDefaultResponse()
+    fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
+    const transport = new AirbrakeTransport(airbrakeOpts)
+    await transport.log({message: errorObj})
+
+    // Check the error object passed to the transport is unmodified
+    expect(errorObj).to.be.an.error()
+    expect(errorObj.message).to.equal(inputText)
+
+    // Check the text given in the notification
+    defaultResponseAssertions(notificationRequest)
+    const payload = notificationRequest.payload
+    expect(payload.errors[0].message).to.equal(expectedNotification)
+  })
+
+  lab.test('doesn\'t alter the Error object when in an Array', async () => {
+    const inputText = colors.blue('Example error text with ANSI colours')
+    const errorObj = new Error(inputText)
+    let notificationRequest = null
+    fakeAirbrakeServer.useDefaultResponse()
+    fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
+    const transport = new AirbrakeTransport(airbrakeOpts)
+    await transport.log({message: ['Some preceding text', errorObj]})
+
+    // Check the error object passed to the transport is unmodified
+    expect(errorObj).to.be.an.error()
+    expect(errorObj.message).to.equal(inputText)
+
+    // Check the text given in the notification
+    defaultResponseAssertions(notificationRequest)
+    const payload = notificationRequest.payload
+    expect(payload.errors[0].message).to.equal('Some preceding text Example error text with ANSI colours')
   })
 
   lab.after(async () => {
