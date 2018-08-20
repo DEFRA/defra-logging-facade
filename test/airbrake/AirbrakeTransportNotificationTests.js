@@ -8,6 +8,7 @@ const fakeAirbrakeServer = new FakeAirbrake()
 const path = require('path')
 const scriptName = path.basename(__filename)
 const colors = require('colors')
+const assert = require('assert')
 
 function defaultResponseAssertions (request) {
   expect(request.params.path).to.equal('/api/v3/projects/1/notices')
@@ -202,6 +203,52 @@ lab.experiment('Test airbrake transport', () => {
     defaultResponseAssertions(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Some preceding text Example error text with ANSI colours')
+  })
+
+  lab.test('handles different types of Error object', async () => {
+    class CustomErrorWithNonStandardConstructor extends Error {
+      constructor (options) {
+        assert.ok(typeof options === 'object', 'Options should be an object')
+        super(options.message)
+      }
+    }
+
+    const errors = [
+      new Error('Standard error object'),
+      new RangeError('RangeError object'),
+      new ReferenceError('ReferenceError object'),
+      new SyntaxError('SyntaxError object'),
+      new TypeError('TypeError object'),
+      new CustomErrorWithNonStandardConstructor({
+        message: 'Test non-standard error object'
+      })
+    ]
+
+    // Generate an AssertionError and add to the list
+    try {
+      assert.strictEqual(false, true, 'Expected false to be true (for testing purposes only...)')
+    } catch (e) {
+      errors.push(e)
+    }
+
+    for (let errorObj of errors) {
+      const errorMsg = errorObj.message
+
+      let notificationRequest = null
+      fakeAirbrakeServer.useDefaultResponse()
+      fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
+      const transport = new AirbrakeTransport(airbrakeOpts)
+      await transport.log({message: ['Some preceding text', errorObj]})
+
+      // Check the error object passed to the transport is unmodified
+      expect(errorObj).to.be.an.error()
+      expect(errorObj.message).to.equal(errorMsg)
+
+      // Check the text given in the notification
+      defaultResponseAssertions(notificationRequest)
+      const payload = notificationRequest.payload
+      expect(payload.errors[0].message).to.equal('Some preceding text ' + errorMsg)
+    }
   })
 
   lab.after(async () => {
