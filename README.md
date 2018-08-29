@@ -166,7 +166,7 @@ General:
 
 | Variable           | Description   
 | -------------      |-------------
-| DEFAULT_LOG_LEVEL  | The lowest severity of message which will be processed by any transport, **default: `info`** 
+| LOG_LEVEL          | The lowest severity of message which will be processed by any transport, **default: `info`** 
 
 
 For airbrake/errbit integration:
