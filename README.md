@@ -1,16 +1,29 @@
 [![Build Status](https://travis-ci.org/DEFRA/defra-logging-facade.svg?branch=master)](https://travis-ci.org/DEFRA/defra-logging-facade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5c85565bb7e8316b381c/maintainability)](https://codeclimate.com/github/DEFRA/defra-logging-facade/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/5c85565bb7e8316b381c/test_coverage)](https://codeclimate.com/github/DEFRA/defra-logging-facade/test_coverage)
+[![Licence](https://img.shields.io/badge/Licence-OGLv3-blue.svg)](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3)
 
 The DEFRA logging facade has been designed to standardise the logging functionality for digital services.
 It uses twelve-factor app principles and may be configured completely via environment variables. 
 
+## Cloning
+Cloning via SSH from behind a corporate firewall which blocks port 22:
+```bash
+git clone ssh://git@ssh.github.com:443/DEFRA/defra-logging-facade
+```
 
 # Installation
 
+Via github:
 ```
-npm install --save defra-logging-facade
+npm install --save https://github.com/DEFRA/defra-logging-facade.git#master
 ```
+
+It is recommended that tie to a specific commit/version as follows:
+```
+npm install --save https://github.com/DEFRA/defra-logging-facade.git#commit_or_version
+```
+
 
 # Usage
 
@@ -144,7 +157,7 @@ const {logger} = require('defra-logging-facade')
 server.ext('onPreResponse', (request, h) => {
   if (request.response.isBoom) {
     // An error occurred processing the request
-    const statusCode = request.response.output.statusCode
+    const statusCode = Math.floor(request.response.output.statusCode) || 500
     
     if (statusCode / 100 === 4) {
       // Custom handling for 4xx codes
