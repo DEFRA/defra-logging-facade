@@ -18,7 +18,7 @@
     "node": ">=8.11.1"
   },
   "dependencies": {
-    "airbrake-js": "~1.4.9",
+    "airbrake-js": "~1.6.1",
     "lodash": "~4.17.10",
     "request": "~2.88.0",
     "winston": "~3.1.0",
