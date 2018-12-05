@@ -1,16 +1,16 @@
 'use strict'
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-const {expect} = require('code')
+const { expect } = require('code')
 const wait = require('../lib/wait')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
 const TestAppServer = require('../lib/TestAppServer')
 const request = require('request')
-const {Logger, HapiErrorLoggerPlugin} = require('../../lib/index')
+const { Logger, HapiErrorLoggerPlugin } = require('../../lib/index')
 let appServer = null
 
-lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
+lab.experiment('Test hapi airbrake integration', { timeout: 30000 }, () => {
   /**
    * Before running tests, create a mock airbrake server and a mock application server which has the plugin set up
    */
@@ -39,7 +39,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
 
-    await appServer.inject({url: `http://localhost:${appServer.getPort()}/broken?withTestParameter=true`})
+    await appServer.inject({ url: `http://localhost:${appServer.getPort()}/broken?withTestParameter=true` })
     await wait.until(() => {
       return payload !== null
     })
@@ -54,7 +54,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     let payload = null
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
-    await appServer.inject({url: `http://localhost:${appServer.getPort()}/something/that/doesnt/exist`})
+    await appServer.inject({ url: `http://localhost:${appServer.getPort()}/something/that/doesnt/exist` })
     await wait.for(1000)
     expect(payload).to.be.null()
   })
@@ -82,7 +82,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     let payload = null
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
-    await appServer.inject({url: `http://localhost:${appServer.getPort()}/ping/200`})
+    await appServer.inject({ url: `http://localhost:${appServer.getPort()}/ping/200` })
     await wait.for(1000)
     expect(payload).to.be.null()
   })
@@ -128,7 +128,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
     fakeAirbrakeServer.useErrorResponse(500)
     fakeAirbrakeServer.setNotificationHandler((request) => (payload = request.payload))
 
-    await appServer.inject({url: `http://localhost:${appServer.getPort()}/broken`})
+    await appServer.inject({ url: `http://localhost:${appServer.getPort()}/broken` })
     await wait.until(() => {
       return payload !== null
     })
@@ -145,7 +145,7 @@ lab.experiment('Test hapi airbrake integration', {timeout: 30000}, () => {
       callCount != null ? callCount++ : callCount = 1
     })
     for (let i = 0; i < 200; i++) {
-      await appServer.inject({url: `http://localhost:${appServer.getPort()}/broken`})
+      await appServer.inject({ url: `http://localhost:${appServer.getPort()}/broken` })
     }
     await wait.until(() => {
       return callCount !== null

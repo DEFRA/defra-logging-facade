@@ -1,7 +1,7 @@
 'use strict'
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-const {expect} = require('code')
+const { expect } = require('code')
 const AirbrakeTransport = require('../../lib/transports/AirbrakeTransport')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
@@ -134,7 +134,7 @@ lab.experiment('Test airbrake transport', () => {
     fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
 
     const transport = new AirbrakeTransport(airbrakeOpts)
-    await transport.log({message: []})
+    await transport.log({ message: [] })
 
     defaultResponseAssertions(notificationRequest)
     const payload = notificationRequest.payload
@@ -147,7 +147,7 @@ lab.experiment('Test airbrake transport', () => {
     fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
 
     const transport = new AirbrakeTransport(airbrakeOpts)
-    await transport.log({anotherProperty: 'here'})
+    await transport.log({ anotherProperty: 'here' })
 
     defaultResponseAssertions(notificationRequest)
     const payload = notificationRequest.payload
@@ -174,7 +174,7 @@ lab.experiment('Test airbrake transport', () => {
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
     const transport = new AirbrakeTransport(airbrakeOpts)
-    await transport.log({message: errorObj})
+    await transport.log({ message: errorObj })
 
     // Check the error object passed to the transport is unmodified
     expect(errorObj).to.be.an.error()
@@ -193,7 +193,7 @@ lab.experiment('Test airbrake transport', () => {
     fakeAirbrakeServer.useDefaultResponse()
     fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
     const transport = new AirbrakeTransport(airbrakeOpts)
-    await transport.log({message: ['Some preceding text', errorObj]})
+    await transport.log({ message: ['Some preceding text', errorObj] })
 
     // Check the error object passed to the transport is unmodified
     expect(errorObj).to.be.an.error()
@@ -238,7 +238,7 @@ lab.experiment('Test airbrake transport', () => {
       fakeAirbrakeServer.useDefaultResponse()
       fakeAirbrakeServer.setNotificationHandler((request) => (notificationRequest = request))
       const transport = new AirbrakeTransport(airbrakeOpts)
-      await transport.log({message: ['Some preceding text', errorObj]})
+      await transport.log({ message: ['Some preceding text', errorObj] })
 
       // Check the error object passed to the transport is unmodified
       expect(errorObj).to.be.an.error()

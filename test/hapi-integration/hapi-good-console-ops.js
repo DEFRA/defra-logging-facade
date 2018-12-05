@@ -1,8 +1,8 @@
 'use strict'
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-const {expect} = require('code')
-const {Logger} = require('../../lib/index')
+const { expect } = require('code')
+const { Logger } = require('../../lib/index')
 const LogMonitor = require('../lib/LogMonitor')
 
 const logger = new Logger({
@@ -14,7 +14,7 @@ const TestAppServer = require('../lib/TestAppServer')
 const wait = require('../lib/wait')
 let appServer = null
 
-lab.experiment('Test hapi good console logging (ops only)', {timeout: 30000}, () => {
+lab.experiment('Test hapi good console logging (ops only)', { timeout: 30000 }, () => {
   lab.before(async () => {
     appServer = new TestAppServer({
       plugins: [
@@ -36,7 +36,7 @@ lab.experiment('Test hapi good console logging (ops only)', {timeout: 30000}, ()
     await appServer.start()
   })
 
-  lab.test('logs ops to console', {timeout: 30000}, async () => {
+  lab.test('logs ops to console', { timeout: 30000 }, async () => {
     monitor.reset()
     await wait.for(3500)
     const logs = await monitor.all()

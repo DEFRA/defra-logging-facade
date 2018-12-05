@@ -23,7 +23,7 @@ module.exports = class TestAppServer {
       method: ['GET', 'POST', 'PATCH', 'PUT'],
       path: '/ping/{responseCode*}',
       handler: (request, h) => {
-        return h.response({response: request.params.responseCode}).code(parseInt(request.params.responseCode))
+        return h.response({ response: request.params.responseCode }).code(parseInt(request.params.responseCode))
       }
     })
     this._fakeAppServer.route({
@@ -38,7 +38,7 @@ module.exports = class TestAppServer {
       path: '/fireRequestLog',
       handler: (request, h) => {
         request.log('info', 'A simple request log item')
-        return h.response({response: 200}).code(200)
+        return h.response({ response: 200 }).code(200)
       }
     })
     this._fakeAppServer.route({
@@ -46,7 +46,7 @@ module.exports = class TestAppServer {
       path: '/fireRequestErrorLog',
       handler: (request, h) => {
         request.log('error', new Error('Testing error handling!'))
-        return h.response({response: 200}).code(200)
+        return h.response({ response: 200 }).code(200)
       }
     })
     this._fakeAppServer.route({
@@ -54,7 +54,7 @@ module.exports = class TestAppServer {
       path: '/fireServerLog',
       handler: (request, h) => {
         this._fakeAppServer.log('something', 'Something happened')
-        return h.response({response: 200}).code(200)
+        return h.response({ response: 200 }).code(200)
       }
     })
     this._fakeAppServer.route({
@@ -62,7 +62,7 @@ module.exports = class TestAppServer {
       path: '/fireServerErrorLog',
       handler: (request, h) => {
         this._fakeAppServer.log('error', new Error('Testing error handling!'))
-        return h.response({response: 200}).code(200)
+        return h.response({ response: 200 }).code(200)
       }
     })
 
@@ -74,7 +74,7 @@ module.exports = class TestAppServer {
       handler: async (request, h) => {
         const duration = parseInt(request.params.duration) || 5000
         await delay(duration)
-        return h.response({response: 200}).code(200)
+        return h.response({ response: 200 }).code(200)
       }
     })
 
@@ -93,7 +93,7 @@ module.exports = class TestAppServer {
   }
 
   async stop () {
-    await this._fakeAppServer.stop({timeout: 1000})
+    await this._fakeAppServer.stop({ timeout: 1000 })
   }
 
   getPort () {

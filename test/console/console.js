@@ -1,9 +1,9 @@
 'use strict'
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-const {expect} = require('code')
+const { expect } = require('code')
 const wait = require('../lib/wait')
-const {logger} = require('../../lib/index')
+const { logger } = require('../../lib/index')
 const LogMonitor = require('../lib/LogMonitor')
 const monitor = new LogMonitor(logger)
 

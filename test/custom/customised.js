@@ -1,13 +1,13 @@
 'use strict'
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-const {expect} = require('code')
+const { expect } = require('code')
 const wait = require('../lib/wait')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
 const Logger = require('../../lib/index')
 
-lab.experiment('Customised logger configurations', {timeout: 30000}, () => {
+lab.experiment('Customised logger configurations', { timeout: 30000 }, () => {
   /**
    * Before running tests, create a mock airbrake server and a mock application server which has the plugin set up
    */

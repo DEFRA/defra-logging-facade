@@ -40,7 +40,7 @@ module.exports = class FakeAirbrake {
   }
 
   async stop () {
-    await this._fakeAirbrakeServer.stop({timeout: 1000})
+    await this._fakeAirbrakeServer.stop({ timeout: 1000 })
   }
 
   useDefaultResponse () {
