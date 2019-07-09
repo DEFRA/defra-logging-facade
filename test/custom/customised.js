@@ -12,7 +12,7 @@ lab.experiment('Customised logger configurations', { timeout: 30000 }, () => {
    * Before running tests, create a mock airbrake server and a mock application server which has the plugin set up
    */
   lab.before(async () => {
-    process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}/`
+    process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}`
     process.env.AIRBRAKE_PROJECT_KEY = '1234567890'
     process.env.AIRBRAKE_LOG_LEVEL = 'error'
     process.env.NODE_ENV = 'Unit test fake app server'

@@ -21,7 +21,7 @@ lab.experiment('Test hapi plugin', { timeout: 30000 }, () => {
     await appServer.inject({ url: `http://localhost:${appServer.getPort()}/broken?withTestParameter=true` })
     const result = await monitor.lastLog()
     expect(result.level).to.equal('error')
-    expect(result.message).to.include('Error: Broken')
+    expect(result.message).to.include('Error: NOT AN ERROR - JUST TESTING')
   })
 
   lab.test('intercepts the request.log() method', async () => {

@@ -9,7 +9,7 @@ const TestAppServer = require('../lib/TestAppServer')
 let appServer = null
 
 function testResponseLog (path, params, statusCode, method = 'get') {
-  return new RegExp(`\\[response].*${method}.*${path} ${params}.*${statusCode}`)
+  return new RegExp(`\\[response].*${method}.*${path}.*${params}.*${statusCode}`)
 }
 
 lab.experiment('Test hapi good console logging', { timeout: 30000 }, () => {
@@ -44,7 +44,7 @@ lab.experiment('Test hapi good console logging', { timeout: 30000 }, () => {
 
     for (let log of logs) {
       if (log.level === 'error') {
-        expect(log.message).to.include('Error: Broken')
+        expect(log.message).to.include('Error: NOT AN ERROR - JUST TESTING')
       } else {
         expect(log.message).to.match(testResponseLog('/broken', '{ withTestParameter: \'true\' }', 500))
       }

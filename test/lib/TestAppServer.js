@@ -30,7 +30,7 @@ module.exports = class TestAppServer {
       method: ['GET', 'POST', 'PATCH', 'PUT'],
       path: '/broken',
       handler: () => {
-        throw new Error('Broken')
+        throw new Error('NOT AN ERROR - JUST TESTING')
       }
     })
     this._fakeAppServer.route({

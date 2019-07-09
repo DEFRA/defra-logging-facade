@@ -30,7 +30,8 @@ module.exports = class FakeAirbrake {
             console.error('Error in notification handler', e)
           }
         }
-        return h.response(this._activeResponseGenerator()).code(this._activeResponseCode)
+        const body = { id: Math.floor(Math.random() * 100000) }
+        return h.response(body).code(this._activeResponseCode)
       }
     })
   }
@@ -44,19 +45,11 @@ module.exports = class FakeAirbrake {
   }
 
   useDefaultResponse () {
-    this._activeResponseGenerator = () => {
-      return {
-        id: Math.floor(Math.random() * 100000)
-      }
-    }
     this._activeResponseCode = 200
   }
 
-  useErrorResponse (errorCode = 500, errorJsonProducer = null) {
+  useErrorResponse (errorCode = 500) {
     this._activeResponseCode = errorCode
-    if (errorJsonProducer) {
-      this._activeResponseGenerator = errorJsonProducer
-    }
   }
 
   setNotificationHandler (callback) {

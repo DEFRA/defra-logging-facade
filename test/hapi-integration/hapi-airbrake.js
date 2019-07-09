@@ -16,7 +16,7 @@ lab.experiment('Test hapi airbrake integration', { timeout: 30000 }, () => {
    */
   lab.before(async () => {
     console.log('Initialising test servers.')
-    process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}/`
+    process.env.AIRBRAKE_HOST = `http://localhost:${fakeAirbrakeServer.getPort()}`
     process.env.AIRBRAKE_PROJECT_KEY = '1234567890'
     process.env.AIRBRAKE_LOG_LEVEL = 'error'
     process.env.NODE_ENV = 'Unit test fake app server'
@@ -43,7 +43,7 @@ lab.experiment('Test hapi airbrake integration', { timeout: 30000 }, () => {
     await wait.until(() => {
       return payload !== null
     })
-    expect(payload.errors[0].message).to.equal('Broken')
+    expect(payload.errors[0].message).to.equal('NOT AN ERROR - JUST TESTING')
     expect(payload.params.withTestParameter).to.equal('true')
     expect(payload.context.action).to.equal('GET /broken?withTestParameter=true')
     expect(payload.context.severity).to.equal('error')
@@ -132,7 +132,7 @@ lab.experiment('Test hapi airbrake integration', { timeout: 30000 }, () => {
     await wait.until(() => {
       return payload !== null
     })
-    expect(payload.errors[0].message).to.equal('Broken')
+    expect(payload.errors[0].message).to.equal('NOT AN ERROR - JUST TESTING')
     expect(payload.context.action).to.equal('GET /broken')
     expect(payload.context.severity).to.equal('error')
     expect(payload.context.userAgent).to.equal('shot')

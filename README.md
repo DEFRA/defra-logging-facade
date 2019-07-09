@@ -7,7 +7,7 @@ The DEFRA logging facade has been designed to standardise the logging functional
 It uses twelve-factor app principles and may be configured completely via environment variables. 
 
 ## Cloning
-Cloning via SSH from behind a corporate firewall which blocks port 22:
+Cloning via SSH from behind a firewall which blocks port 22:
 ```bash
 git clone ssh://git@ssh.github.com:443/DEFRA/defra-logging-facade
 ```
@@ -23,14 +23,10 @@ It is recommended that tie to a specific commit/version as follows:
 ```
 npm install --save https://github.com/DEFRA/defra-logging-facade.git#commit_or_version
 ```
-
-
 # Usage
-
 ## Recommended Usage
-
 It is strongly recommended that projects use the default logger unless there is a need to configure a logger in a 
-specific manner (e.g. a special logger object to server as a audit trail).  Thhe default logger is configured solely 
+specific manner (e.g. a special logger object to server as an audit trail).  The default logger is configured solely 
 using environment variables.  For further details of the environment variables available, see below.
 
 ```
@@ -42,30 +38,19 @@ logger.log('Another info message'
 logger.warn('Warning message')
 logger.error('An error occurred', err)
 ```
-> **Note**: Only use the .error() severity when the error is unexpected/unrecoverable and represents a real operational
-> problem with the service.  Client request errors, for example, should never be logged with the .error() method. 
+> **Note**: Only use the .error() severity when the error is unexpected/unrecoverable and represents an operational problem with the service.  
+> Client request errors, for example, should not be logged with the .error() method. 
 
 ## Overriding console log methods
 The DEFRA logging facade provides a simple migration path for existing projects using the console log methods
 (console.log(), console.warn(), console.error()).  The facade implementation of these methods is compatible with the
 existing console logging methods.
 
-There are two ways to switch the existing console logging calls over to use the logging facade:
-
 The facade can also intercept the console log methods on a process-wide basis:
 ```javascript
 const {logger} = require('defra-logging-facade')
 logger.interceptConsole()
 ```
-
-If you want to avoid intercepting the console on a process-wide basis but are too lazy to refactor existing console.log()
-calls, you can shadow the console object, by adding the following require statement at the top of each .js file
-```javascript
-const {console} = require('defra-logging-facade')
-```
-
-
-
 ## Integrating with hapi
 
 ### Simple hapi integration
@@ -171,8 +156,6 @@ server.ext('onPreResponse', (request, h) => {
 })
 
 ``` 
-
-
 # Environment Variable Reference
 
 General:

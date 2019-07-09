@@ -10,8 +10,8 @@ const scriptName = path.basename(__filename)
 const colors = require('colors')
 const assert = require('assert')
 
-function defaultResponseAssertions (request) {
-  expect(request.params.path).to.equal('/api/v3/projects/1/notices')
+function testFakeAirbrakeRequest (request) {
+  expect(request.params.path).to.equal('api/v3/projects/1/notices')
   const payload = request.payload
   expect(payload.errors).to.be.a.array()
   expect(payload.errors.length).to.equal(1)
@@ -19,7 +19,7 @@ function defaultResponseAssertions (request) {
 }
 
 const airbrakeOpts = {
-  airbrakeHost: `http://localhost:${fakeAirbrakeServer.getPort()}/`,
+  airbrakeHost: `http://localhost:${fakeAirbrakeServer.getPort()}`,
   airbrakeKey: '1234567890'
 }
 lab.experiment('Test airbrake transport', () => {
@@ -40,7 +40,7 @@ lab.experiment('Test airbrake transport', () => {
       callbackInvoked = true
     })
     expect(callbackInvoked).to.equal(true)
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('A string message only')
   })
@@ -61,7 +61,7 @@ lab.experiment('Test airbrake transport', () => {
       callbackInvoked = true
     })
     expect(callbackInvoked).to.equal(true)
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('First string Second string')
   })
@@ -76,7 +76,7 @@ lab.experiment('Test airbrake transport', () => {
       message: ['A string containing %s and a', 'an embedded string', new Error('Test error object')]
     })
 
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('A string containing an embedded string and a Test error object')
     expect(payload.errors[0].backtrace[0].file).to.include(scriptName)
@@ -92,7 +92,7 @@ lab.experiment('Test airbrake transport', () => {
       message: new Error('Test error object')
     })
 
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Test error object')
     expect(payload.errors[0].backtrace[0].file).to.include(scriptName)
@@ -121,7 +121,7 @@ lab.experiment('Test airbrake transport', () => {
         level: level
       })
 
-      defaultResponseAssertions(notificationRequest)
+      testFakeAirbrakeRequest(notificationRequest)
       const payload = notificationRequest.payload
       expect(payload.errors[0].message).to.equal(msg)
       expect(payload.context.severity).to.equal(severity)
@@ -136,7 +136,7 @@ lab.experiment('Test airbrake transport', () => {
     const transport = new AirbrakeTransport(airbrakeOpts)
     await transport.log({ message: [] })
 
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Unspecified error')
   })
@@ -149,7 +149,7 @@ lab.experiment('Test airbrake transport', () => {
     const transport = new AirbrakeTransport(airbrakeOpts)
     await transport.log({ anotherProperty: 'here' })
 
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Unspecified error')
   })
@@ -161,7 +161,7 @@ lab.experiment('Test airbrake transport', () => {
     const transport = new AirbrakeTransport(airbrakeOpts)
     await transport.log(null)
 
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Unspecified error')
   })
@@ -181,7 +181,7 @@ lab.experiment('Test airbrake transport', () => {
     expect(errorObj.message).to.equal(inputText)
 
     // Check the text given in the notification
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal(expectedNotification)
   })
@@ -200,7 +200,7 @@ lab.experiment('Test airbrake transport', () => {
     expect(errorObj.message).to.equal(inputText)
 
     // Check the text given in the notification
-    defaultResponseAssertions(notificationRequest)
+    testFakeAirbrakeRequest(notificationRequest)
     const payload = notificationRequest.payload
     expect(payload.errors[0].message).to.equal('Some preceding text Example error text with ANSI colours')
   })
@@ -245,7 +245,7 @@ lab.experiment('Test airbrake transport', () => {
       expect(errorObj.message).to.equal(errorMsg)
 
       // Check the text given in the notification
-      defaultResponseAssertions(notificationRequest)
+      testFakeAirbrakeRequest(notificationRequest)
       const payload = notificationRequest.payload
       expect(payload.errors[0].message).to.equal('Some preceding text ' + errorMsg)
     }
