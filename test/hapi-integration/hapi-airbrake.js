@@ -1,7 +1,7 @@
 'use strict'
-const Lab = require('lab')
+const Lab = require('@hapi/lab')
 const lab = exports.lab = Lab.script()
-const { expect } = require('code')
+const { expect } = require('@hapi/code')
 const wait = require('../lib/wait')
 const FakeAirbrake = require('../lib/FakeAirbrake')
 const fakeAirbrakeServer = new FakeAirbrake()
