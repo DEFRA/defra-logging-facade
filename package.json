@@ -32,7 +32,7 @@
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-standard": "^4.0.0",
     "good": "^8.1.2",
-    "hapi": "^17.8.5",
+    "hapi": "^18.1.0",
     "standard": "^12.0.1"
   }
 }
