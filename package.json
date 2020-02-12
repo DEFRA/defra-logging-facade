@@ -20,7 +20,7 @@
   "dependencies": {
     "airbrake-js": "~1.4.9",
     "lodash.clonedeep": "~4.5.0",
-    "request": "~2.88.0",
+    "request": "~2.88.2",
     "winston": "~3.2.1",
     "winston-transport": "~4.3.0"
   },
