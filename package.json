@@ -22,7 +22,7 @@
     "lodash.clonedeep": "~4.5.0",
     "request": "~2.88.0",
     "winston": "~3.2.1",
-    "winston-transport": "~4.3.0"
+    "winston-transport": "~4.4.0"
   },
   "devDependencies": {
     "@hapi/code": "^5.3.1",
