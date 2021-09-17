@@ -72,4 +72,8 @@ lab.experiment('Test airbrake transport configuration', () => {
     })
     expect(transport.level).to.equal('info')
   })
+
+  lab.test('this fails', () => {
+    expect(false).toBeTruthy()
+  })
 })
